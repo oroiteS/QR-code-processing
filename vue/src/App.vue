@@ -2,13 +2,13 @@
   <div id="app">
     <el-container class="main-container">
       <el-header>
-        <h1>图像处理应用</h1>
+        <h1>二维码识别处理系统</h1>
       </el-header>
       <el-main>
         <router-view />
       </el-main>
       <el-footer>
-        <p>© 2025 图像处理应用</p>
+        <p>© 2025 二维码识别处理系统</p>
       </el-footer>
     </el-container>
   </div>
