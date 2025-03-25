@@ -1,0 +1,19 @@
+Metadata-Version: 2.2
+Name: deblurgan
+Version: 0.1.0
+Summary: DeblurGAN-v2: Deblurring (Orders-of-Magnitude) Faster and Better
+Home-page: https://github.com/VITA-Group/DeblurGANv2
+Author: Orest Kupyn, Tetiana Martyniuk, Junru Wu, Zhangyang Wang
+Author-email: 
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.6
+License-File: LICENSE
+Dynamic: author
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: requires-python
+Dynamic: summary
