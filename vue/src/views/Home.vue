@@ -3,19 +3,19 @@
     <el-row :gutter="20">
       <el-col :span="16">
         <el-card shadow="hover" class="left-panel">
-          <ImageUploader @process-image="handleProcessImage" />
-          <ResultDisplay :result="result" :result-type="resultType" />
+          <ImageUploader ref="imageUploader" @process-image="handleProcessImage" />
+          <ResultDisplay :result="result" :result-type="resultType" @use-as-input="handleUseAsInput" />
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover" class="right-panel">
           <h3>操作面板</h3>
           <el-divider></el-divider>
-          <el-button type="primary" icon="Search" @click="handleDetect" :loading="loading">识别图像</el-button>
-          <el-button type="success" icon="Position" @click="handleCorrect" :loading="loading">校正图像</el-button>
-          <el-button type="warning" icon="Edit" @click="handleDeblur" :loading="loading">修复图像</el-button>
-          <el-button type="danger" icon="Aim" @click="handleScan" :loading="loading">定位图像</el-button>
-          <el-button type="info" icon="RefreshRight" @click="handleReset" :loading="loading">重置图像</el-button>
+          <el-button type="primary" icon="Search" @click="handleScan" :loading="loading">扫描二维码</el-button>
+          <el-button type="success" icon="Position" @click="handleCorrect" :loading="loading">图&nbsp;像&nbsp;校&nbsp;正&nbsp;</el-button>
+          <el-button type="warning" icon="Edit" @click="handleDeblur" :loading="loading">去&nbsp;除&nbsp;模&nbsp;糊&nbsp;  </el-button>
+          <el-button type="danger" icon="Aim" @click="handleDetect" :loading="loading">目&nbsp;标&nbsp;检&nbsp;测&nbsp;  </el-button>
+          <el-button type="info" icon="RefreshRight" @click="handleReset" :loading="loading">重&nbsp;置&nbsp;图&nbsp;像&nbsp;  </el-button>
         </el-card>
       </el-col>
     </el-row>
@@ -48,6 +48,36 @@ export default {
       // 显示上传提示
       this.result = '图片已上传，请选择右侧操作按钮进行处理...';
       this.resultType = 'text';
+    },
+    
+    // 使用处理结果作为输入图片
+    async handleUseAsInput(imageUrl) {
+      try {
+        // 从URL获取Blob
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        
+        // 创建File对象
+        const file = new File([blob], `reused-image-${Date.now()}.jpg`, { type: 'image/jpeg' });
+        
+        // 设置为当前图片并更新上传器
+        this.currentImage = file;
+        
+        // 确保组件和方法存在
+        if (this.$refs.imageUploader && typeof this.$refs.imageUploader.setImage === 'function') {
+          this.$refs.imageUploader.setImage(file);
+          ElMessage.success('已将处理结果设置为当前图片');
+        } else {
+          // 手动设置当前图片
+          this.currentImage = file;
+          this.result = imageUrl;
+          this.resultType = 'image';
+          ElMessage.warning('无法自动更新上传组件，但已设置当前图片');
+        }
+      } catch (error) {
+        console.error('设置图片失败:', error);
+        ElMessage.error('设置图片失败: ' + error.message);
+      }
     },
     
     async sendImageToApi(endpoint) {

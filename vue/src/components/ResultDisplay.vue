@@ -15,22 +15,29 @@
         <div class="image-container">
           <img :src="result" class="result-image" />
         </div>
-        <el-button type="primary" size="large" @click="download" class="download-btn">
-          <el-icon><Download /></el-icon>
-          下载结果图片
-        </el-button>
+        <div class="button-group">
+          <el-button type="primary" size="large" @click="download" class="action-btn">
+            <el-icon><Download /></el-icon>
+            下载结果图片
+          </el-button>
+          <el-button type="success" size="large" @click="useAsInput" class="action-btn">
+            <el-icon><Top /></el-icon>
+            使用当前结果
+          </el-button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Download } from '@element-plus/icons-vue'
+import { Download, Top } from '@element-plus/icons-vue'
 
 export default {
   name: 'ResultDisplay',
   components: {
-    Download
+    Download,
+    Top
   },
   props: {
     result: {
@@ -54,6 +61,11 @@ export default {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+      }
+    },
+    useAsInput() {
+      if (this.resultType === 'image' && this.result) {
+        this.$emit('use-as-input', this.result);
       }
     }
   }
@@ -104,8 +116,14 @@ export default {
   object-fit: contain;
 }
 
-.download-btn {
-  width: 50%;
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 15px;
+}
+
+.action-btn {
+  width: 48%;
 }
 </style>

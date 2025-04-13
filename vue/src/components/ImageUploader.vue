@@ -2,6 +2,7 @@
   <div class="image-uploader">
     <h3>上传图片</h3>
     <el-upload
+      ref="upload"
       class="upload-container"
       action="#"
       :auto-upload="false"
@@ -23,22 +24,29 @@
       <div class="preview-container">
         <img :src="imageUrl" class="preview-image" />
       </div>
-      <el-button type="primary" @click="processImage" class="mt-3">
-        <el-icon><Check /></el-icon>
-        确认使用此图片
-      </el-button>
+      <div class="button-group">
+        <el-button type="primary" @click="processImage" class="action-btn">
+          <el-icon><Check /></el-icon>
+          确认使用此图片
+        </el-button>
+        <el-button type="warning" @click="resetUpload" class="action-btn">
+          <el-icon><Delete /></el-icon>
+          重新选择图片
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Upload, Check } from '@element-plus/icons-vue'
+import { Upload, Check, Delete } from '@element-plus/icons-vue'
 
 export default {
   name: 'ImageUploader',
   components: {
     Upload,
-    Check
+    Check,
+    Delete
   },
   data() {
     return {
@@ -52,6 +60,35 @@ export default {
       this.imageUrl = URL.createObjectURL(uploadFile.raw);
     },
     processImage() {
+      if (this.imageFile) {
+        this.$emit('process-image', this.imageFile);
+      }
+    },
+    resetUpload() {
+      this.imageUrl = '';
+      this.imageFile = null;
+      if (this.$refs.upload) {
+        this.$refs.upload.clearFiles();
+      }
+    },
+    // 添加外部设置图片的方法
+    setImage(file) {
+      if (!file) return;
+      
+      // 清除旧文件
+      this.resetUpload();
+      
+      // 设置新文件
+      this.imageFile = file;
+      this.imageUrl = URL.createObjectURL(file);
+      
+      
+      if (this.$refs.upload) {
+        // 手动更新上传组件的文件列表
+        this.$refs.upload.handleStart(file);
+      }
+      
+      // 触发process-image事件
       this.$emit('process-image', this.imageFile);
     }
   }
@@ -105,8 +142,14 @@ export default {
   border-radius: 4px;
 }
 
-.mt-3 {
+.button-group {
+  display: flex;
+  justify-content: space-between;
   margin-top: 15px;
   width: 100%;
+}
+
+.action-btn {
+  width: 48%;
 }
 </style>
